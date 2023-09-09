@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS */
+        body {
+            background-color: #36393e;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+        }
+        h1 {
+            color: purple;
+        }
+        .form-control {
+            background-color: #f5f5f5;
+            color: #36393e;
+        }
+        .list-group-item {
+            background-color: #f5f5f5;
+            color: #36393e;
+            border-color: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .btn-delete {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">PTM: Pretty Task Manager</h1>
+        <form method="POST" action="/add" class="mb-4">
+            <div class="form-group">
+                <input type="text" name="task_name" class="form-control" placeholder="Enter a task" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="group_name" class="form-control" placeholder="Enter a group (optional)">
+            </div>
+            <button type="submit" class="btn btn-primary">+</button>
+        </form>
+        <div class="mb-4">
+            <input type="text" id="search" class="form-control" placeholder="Search tasks">
+        </div>
+        <div class="mb-4">
+            <select id="group-filter" class="form-control">
+                <option value="">Filter by Group (All)</option>
+                {% for group in groups %}
+                    <option value="{{ group }}">{{ group }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <ul class="list-group" id="task-list">
+            {% for task in tasks %}
+                <li class="list-group-item">
+                    <span class="task-name">{{ task[1] }}</span>
+                    <span class="group-name">{{ task[2] }}</span>
+                    <a href="/delete/{{ task[0] }}" class="btn btn-danger btn-sm btn-delete">X</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript for filtering tasks and searching
+        $(document).ready(function() {
+            $('#group-filter').change(function() {
+                var selectedGroup = $(this).val();
+                $('#task-list li').hide();
+                if (selectedGroup === '') {
+                    $('#task-list li').show();
+                } else {
+                    $('#task-list li .group-name:contains(' + selectedGroup + ')').parent().show();
+                }
+            });
+            $('#search').keyup(function() {
+                var searchText = $(this).val().toLowerCase();
+                $('#task-list li').hide();
+                $('#task-list li .task-name:contains(' + searchText + ')').parent().show();
+            });
+        });
+    </script>
+</body>
+</html>
